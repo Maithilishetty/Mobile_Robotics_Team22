@@ -1,0 +1,12 @@
+# Ignore data
+*.bag
+*.zip
+*.png
+*.csv
+
+# Ignore example data
+mav0
+cave_dataset
+
+# Ignore build directory
+okvis/build
