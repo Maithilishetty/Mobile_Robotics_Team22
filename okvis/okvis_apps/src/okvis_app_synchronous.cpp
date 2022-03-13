@@ -311,12 +311,22 @@ int main(int argc, char **argv)
       cv::Mat filtered = cv::imread(
           path + "/cam" + std::to_string(i) + "/data/" + *cam_iterators.at(i),
           cv::IMREAD_GRAYSCALE);
-      std::cout << "Getting new image: " << path << "/cam" << std::to_string(i) << "/data/" << *cam_iterators.at(i) << std::endl;
-      std::string nanoseconds = cam_iterators.at(i)->substr(
-          cam_iterators.at(i)->size() - 13, 9);
-      std::string seconds = cam_iterators.at(i)->substr(
-          0, cam_iterators.at(i)->size() - 13);
+      //std::cout << "Getting new image: " << path << "/cam" << std::to_string(i) << "/data/" << *cam_iterators.at(i) << std::endl;
+      // New code to properly format data in scientific notation
+      std::string seconds, nanoseconds;
+      std::string s = *(cam_iterators.at(i));
+      if (s.find("E") != std::string::npos) { 
+        // Of form: "1.37268720 855007E+018"
+        // Convert to: 137268720855007000
+        seconds = s.substr(0, 1) + s.substr(2, 9);
+        nanoseconds = s.substr(10, s.find("E") - 10);
+        while (nanoseconds.length() < 9) nanoseconds = nanoseconds + "9";
+      } else {
+        nanoseconds = s.substr(s.size() - 13, 9);
+        seconds = s.substr(0, s.size() - 13);
+      }
       t = okvis::Time(std::stoi(seconds), std::stoi(nanoseconds));
+      std::cout << "new camera timestamp: " << t << std::endl;
 
       if (start == okvis::Time(0.0)) {
         start = t;

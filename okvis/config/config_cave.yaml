@@ -1,12 +1,12 @@
 %YAML:1.0
 cameras:
      - {T_SC:
-        [ 1.0, 0.0, 0.0, -0.64,
-          0.0, -1.0, 0.0, 0.0,
-          0.0, 0.0, 1.0, 0.09,
+        [ -1.0, 0.0, 0.0, 0.0,
+          0.0, 1.0, 0.0, -0.64,
+          0.0, 0.0, 1.0, -0.09,
            0.0, 0.0, 0.0, 1.0],
         image_dimension: [384, 288],
-        distortion_coefficients: [-0.3670656233416921, 0.203001968694465, 0.003336917744124004, -0.000487426354679637],
+        distortion_coefficients: [-0.3670656233416921, 0.203001968694465, 0.003336917744124004, -0.000487426354679637, 0.0],
         distortion_type: plumb_bob,
         focal_length: [405.6384738851233, 405.588335378204],
         principal_point: [189.9054317917407, 139.9149578253755]}
@@ -48,7 +48,7 @@ numImuFrames: 3 # number of frames linked by most recent nonlinear IMU error ter
 ceres_options:
     minIterations: 3   # minimum number of iterations always performed
     maxIterations: 10  # never do more than these, even if not converged
-    timeLimit: 0.035   # [s] negative values will set the an unlimited time limit
+    timeLimit: 0.135   # [s] negative values will set the an unlimited time limit
 
 # detection
 detection_options:
@@ -68,7 +68,7 @@ useDriver: true
 # some options for how and what to publish -- optional in ROS-free version
 publishing_options:
     publish_rate: 200                  # rate at which odometry updates are published only works properly if imu_rate/publish_rate is an integer!!
-    publishLandmarks: treu             # select, if you want to publish landmarks at all
+    publishLandmarks: true             # select, if you want to publish landmarks at all
     landmarkQualityThreshold: 1.0e-2   # landmark with lower quality will not be published
     maximumLandmarkQuality: 0.05       # landmark with higher quality will be published with the maximum colour intensity
     maxPathLength: 20                  # maximum length of the published path

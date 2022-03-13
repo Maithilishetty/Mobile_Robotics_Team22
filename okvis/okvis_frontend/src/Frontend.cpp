@@ -298,11 +298,14 @@ bool Frontend::doWeNeedANewKeyframe(
 
   if (estimator.numFrames() < 2) {
     // just starting, so yes, we need this as a new keyframe
+    std::cout << "New keyframe on initialization" << std::endl;
     return true;
   }
 
-  if (!isInitialized_)
+  if (!isInitialized_) {
+    std::cout << "Not initialized. Cannot make keyframe." << std::endl;
     return false;
+  }
 
   double overlap = 0.0;
   double ratio = 0.0;
