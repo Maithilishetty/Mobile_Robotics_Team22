@@ -297,45 +297,49 @@ int ImuError::propagation(const okvis::ImuMeasurementDeque & imuMeasurements,
   okvis::Time end = t_end;
 
   // sanity check:
+  // Ensures there are valid IMU measurements to process.
   assert(imuMeasurements.front().timeStamp<=time);
   if (!(imuMeasurements.back().timeStamp >= end))
     return -1;  // nothing to do...
 
   // initial condition
-  Eigen::Vector3d r_0 = T_WS.r();
-  Eigen::Quaterniond q_WS_0 = T_WS.q();
-  Eigen::Matrix3d C_WS_0 = T_WS.C();
+  Eigen::Vector3d r_0 = T_WS.r();       // r_0 : initial translation component of S->W transformation
+  Eigen::Quaterniond q_WS_0 = T_WS.q(); // q_WS_0 : initial quaternion rotation component of S->W transformation
+  Eigen::Matrix3d C_WS_0 = T_WS.C();    // C_WS_0 : initial rotation matrix component of S->W transformation
 
   // increments (initialise with identity)
   Eigen::Quaterniond Delta_q(1,0,0,0);
-  Eigen::Matrix3d C_integral = Eigen::Matrix3d::Zero();
-  Eigen::Matrix3d C_doubleintegral = Eigen::Matrix3d::Zero();
-  Eigen::Vector3d acc_integral = Eigen::Vector3d::Zero();
-  Eigen::Vector3d acc_doubleintegral = Eigen::Vector3d::Zero();
+  Eigen::Matrix3d C_integral = Eigen::Matrix3d::Zero();         // Rotation integral
+  Eigen::Matrix3d C_doubleintegral = Eigen::Matrix3d::Zero();   // Rotation double integral
+  Eigen::Vector3d acc_integral = Eigen::Vector3d::Zero();       // Acceleration integral
+  Eigen::Vector3d acc_doubleintegral = Eigen::Vector3d::Zero(); // Acceleration double integral
 
   // cross matrix accumulatrion
-  Eigen::Matrix3d cross = Eigen::Matrix3d::Zero();
+  Eigen::Matrix3d cross = Eigen::Matrix3d::Zero();  //?
 
   // sub-Jacobians
-  Eigen::Matrix3d dalpha_db_g = Eigen::Matrix3d::Zero();
-  Eigen::Matrix3d dv_db_g = Eigen::Matrix3d::Zero();
-  Eigen::Matrix3d dp_db_g = Eigen::Matrix3d::Zero();
+  Eigen::Matrix3d dalpha_db_g = Eigen::Matrix3d::Zero();  //?
+  Eigen::Matrix3d dv_db_g = Eigen::Matrix3d::Zero();      //?
+  Eigen::Matrix3d dp_db_g = Eigen::Matrix3d::Zero();      //?
 
   // the Jacobian of the increment (w/o biases)
-  Eigen::Matrix<double,15,15> P_delta = Eigen::Matrix<double,15,15>::Zero();
+  Eigen::Matrix<double,15,15> P_delta = Eigen::Matrix<double,15,15>::Zero();    // ?????
 
-  double Delta_t = 0;
+  double Delta_t = 0;       // Used to store the total time used during measurement propagation (for loop)
   bool hasStarted = false;
   int i = 0;
+
+  // Loop through all imu measurements
   for (okvis::ImuMeasurementDeque::const_iterator it = imuMeasurements.begin();
         it != imuMeasurements.end(); ++it) {
 
-    Eigen::Vector3d omega_S_0 = it->measurement.gyroscopes;
-    Eigen::Vector3d acc_S_0 = it->measurement.accelerometers;
-    Eigen::Vector3d omega_S_1 = (it + 1)->measurement.gyroscopes;
-    Eigen::Vector3d acc_S_1 = (it + 1)->measurement.accelerometers;
+    Eigen::Vector3d omega_S_0 = it->measurement.gyroscopes;         // Read in current gyroscope
+    Eigen::Vector3d acc_S_0 = it->measurement.accelerometers;       // Read in current accelerometer
+    Eigen::Vector3d omega_S_1 = (it + 1)->measurement.gyroscopes;   // Read in next gyroscope
+    Eigen::Vector3d acc_S_1 = (it + 1)->measurement.accelerometers; // Read in next accelerometer
 
     // time delta
+    // Calculates the change in time between current measurement and next measurement (dt)
     okvis::Time nexttime;
     if ((it + 1) == imuMeasurements.end()) {
       nexttime = t_end;
@@ -343,7 +347,7 @@ int ImuError::propagation(const okvis::ImuMeasurementDeque & imuMeasurements,
       nexttime = (it + 1)->timeStamp;
     double dt = (nexttime - time).toSec();
 
-
+    // If we are at the end, set nexttime accordingly
     if (end < nexttime) {
       double interval = (nexttime - it->timeStamp).toSec();
       nexttime = t_end;
@@ -356,13 +360,13 @@ int ImuError::propagation(const okvis::ImuMeasurementDeque & imuMeasurements,
     if (dt <= 0.0) {
       continue;
     }
-    Delta_t += dt;
+    Delta_t += dt; // Compute total time across all IMU measurements
 
     if (!hasStarted) {
       hasStarted = true;
       const double r = dt / (nexttime - it->timeStamp).toSec();
-      omega_S_0 = (r * omega_S_0 + (1.0 - r) * omega_S_1).eval();
-      acc_S_0 = (r * acc_S_0 + (1.0 - r) * acc_S_1).eval();
+      omega_S_0 = (r * omega_S_0 + (1.0 - r) * omega_S_1).eval(); // Find middle ground between current gyroscope and next gyroscope depending on elapsed time
+      acc_S_0 = (r * acc_S_0 + (1.0 - r) * acc_S_1).eval();       // Find middle ground between current accelerometer and next accelerometer depending on elapsed time
     }
 
     // ensure integrity
@@ -388,28 +392,30 @@ int ImuError::propagation(const okvis::ImuMeasurementDeque & imuMeasurements,
       LOG(WARNING) << "acc saturation";
     }
 
+    std::cout << "Acceleration reading: (" << acc_S_0[0] << ", " << acc_S_0[1] << ", " << acc_S_0[2] << ")" << std::endl;
+
     // actual propagation
     // orientation:
     Eigen::Quaterniond dq;
-    const Eigen::Vector3d omega_S_true = (0.5*(omega_S_0+omega_S_1) - speedAndBiases.segment<3>(3));
-    const double theta_half = omega_S_true.norm() * 0.5 * dt;
-    const double sinc_theta_half = ode::sinc(theta_half);
-    const double cos_theta_half = cos(theta_half);
-    dq.vec() = sinc_theta_half * omega_S_true * 0.5 * dt;
-    dq.w() = cos_theta_half;
-    Eigen::Quaterniond Delta_q_1 = Delta_q * dq;
+    const Eigen::Vector3d omega_S_true = (0.5*(omega_S_0+omega_S_1) - speedAndBiases.segment<3>(3)); // Average gyro readings, subtract angular biases
+    const double theta_half = omega_S_true.norm() * 0.5 * dt; // New position, half?
+    const double sinc_theta_half = ode::sinc(theta_half); // Sinc of theta half
+    const double cos_theta_half = cos(theta_half); // Cosine of theta half
+    dq.vec() = sinc_theta_half * omega_S_true * 0.5 * dt; // Top part of equation (3) in okvis paper
+    dq.w() = cos_theta_half;                              // Bottom part of equation (3) in okvis paper
+    Eigen::Quaterniond Delta_q_1 = Delta_q * dq;          // Post-propagation rotation is simply old rotation (unit rotation) times change in rotation
     // rotation matrix integral:
-    const Eigen::Matrix3d C = Delta_q.toRotationMatrix();
-    const Eigen::Matrix3d C_1 = Delta_q_1.toRotationMatrix();
-    const Eigen::Vector3d acc_S_true = (0.5*(acc_S_0+acc_S_1) - speedAndBiases.segment<3>(6));
-    const Eigen::Matrix3d C_integral_1 = C_integral + 0.5*(C + C_1)*dt;
-    const Eigen::Vector3d acc_integral_1 = acc_integral + 0.5*(C + C_1)*acc_S_true*dt;
+    const Eigen::Matrix3d C = Delta_q.toRotationMatrix();     // C is the original rotation matrix
+    const Eigen::Matrix3d C_1 = Delta_q_1.toRotationMatrix(); // C1 is the post-propagation matrix
+    const Eigen::Vector3d acc_S_true = (0.5*(acc_S_0+acc_S_1) - speedAndBiases.segment<3>(6));  // Average accelerometer readings, subtract biases
+    const Eigen::Matrix3d C_integral_1 = C_integral + 0.5*(C + C_1)*dt; // Update post-propagation rotation matrix integral
+    const Eigen::Vector3d acc_integral_1 = acc_integral + 0.5*(C + C_1)*acc_S_true*dt; // Update acceleration integral
     // rotation matrix double integral:
-    C_doubleintegral += C_integral*dt + 0.25*(C + C_1)*dt*dt;
-    acc_doubleintegral += acc_integral*dt + 0.25*(C + C_1)*acc_S_true*dt*dt;
+    C_doubleintegral += C_integral*dt + 0.25*(C + C_1)*dt*dt; // Update rotation matrix double integral (?)
+    acc_doubleintegral += acc_integral*dt + 0.25*(C + C_1)*acc_S_true*dt*dt; // Update acceleration double integral
 
     // Jacobian parts
-    dalpha_db_g += dt*C_1;
+    dalpha_db_g += dt*C_1; // ?
     const Eigen::Matrix3d cross_1 = dq.inverse().toRotationMatrix()*cross +
         okvis::kinematics::rightJacobian(omega_S_true*dt)*dt;
     const Eigen::Matrix3d acc_S_x = okvis::kinematics::crossMx(acc_S_true);
@@ -420,15 +426,17 @@ int ImuError::propagation(const okvis::ImuMeasurementDeque & imuMeasurements,
     if (covariance) {
       Eigen::Matrix<double,15,15> F_delta = Eigen::Matrix<double,15,15>::Identity();
       // transform
-      F_delta.block<3,3>(0,3) = -okvis::kinematics::crossMx(acc_integral*dt + 0.25*(C + C_1)*acc_S_true*dt*dt);
-      F_delta.block<3,3>(0,6) = Eigen::Matrix3d::Identity()*dt;
-      F_delta.block<3,3>(0,9) = dt*dv_db_g + 0.25*dt*dt*(C*acc_S_x*cross + C_1*acc_S_x*cross_1);
-      F_delta.block<3,3>(0,12) = -C_integral*dt + 0.25*(C + C_1)*dt*dt;
-      F_delta.block<3,3>(3,9) = -dt*C_1;
-      F_delta.block<3,3>(6,3) = -okvis::kinematics::crossMx(0.5*(C + C_1)*acc_S_true*dt);
-      F_delta.block<3,3>(6,9) = 0.5*dt*(C*acc_S_x*cross + C_1*acc_S_x*cross_1);
-      F_delta.block<3,3>(6,12) = -0.5*(C + C_1)*dt;
-      P_delta = F_delta*P_delta*F_delta.transpose();
+      // Create the F_d matrix as defined in (11) and (10) in the paper. This does not match exactly, which is confusing
+      // Github does say "Also note that the quaternion standard has been adapted to match Eigen/ROS, thus some related mathematical description in [1,2,3] will not match the implementation here."
+      F_delta.block<3,3>(0,3) = -okvis::kinematics::crossMx(acc_integral*dt + 0.25*(C + C_1)*acc_S_true*dt*dt);     // ???
+      F_delta.block<3,3>(0,6) = Eigen::Matrix3d::Identity()*dt;                                                     // Identity * dt
+      F_delta.block<3,3>(0,9) = dt*dv_db_g + 0.25*dt*dt*(C*acc_S_x*cross + C_1*acc_S_x*cross_1);                    // ???
+      F_delta.block<3,3>(0,12) = -C_integral*dt + 0.25*(C + C_1)*dt*dt;                                             // ???
+      F_delta.block<3,3>(3,9) = -dt*C_1;                                                                            // -C_WS * dt why is this negative???
+      F_delta.block<3,3>(6,3) = -okvis::kinematics::crossMx(0.5*(C + C_1)*acc_S_true*dt);                           // [C_WS(acc)*dt]^X why isn't there accelerometer bias here?
+      F_delta.block<3,3>(6,9) = 0.5*dt*(C*acc_S_x*cross + C_1*acc_S_x*cross_1);                                     // ???
+      F_delta.block<3,3>(6,12) = -0.5*(C + C_1)*dt;                                                                 // -C_WS * dt
+      P_delta = F_delta*P_delta*F_delta.transpose(); // Calculation of covariance propagatiion, without accounting for noise-- first half of equation (12)
       // add noise. Note that transformations with rotation matrices can be ignored, since the noise is isotropic.
       //F_tot = F_delta*F_tot;
       const double sigma2_dalpha = dt * sigma_g_c * sigma_g_c;
@@ -454,6 +462,7 @@ int ImuError::propagation(const okvis::ImuMeasurementDeque & imuMeasurements,
     }
 
     // memory shift
+    // This is basically state = next_state
     Delta_q = Delta_q_1;
     C_integral = C_integral_1;
     acc_integral = acc_integral_1;
@@ -466,15 +475,21 @@ int ImuError::propagation(const okvis::ImuMeasurementDeque & imuMeasurements,
     if (nexttime == t_end)
       break;
 
-  }
+  } // End of for loop over each IMU measurement
 
   // actual propagation output:
   const Eigen::Vector3d g_W = imuParams.g * Eigen::Vector3d(0, 0, 6371009).normalized();
   T_WS.set(r_0+speedAndBiases.head<3>()*Delta_t
              + C_WS_0*(acc_doubleintegral/*-C_doubleintegral*speedAndBiases.segment<3>(6)*/)
              - 0.5*g_W*Delta_t*Delta_t,
+             
              q_WS_0*Delta_q);
   speedAndBiases.head<3>() += C_WS_0*(acc_integral/*-C_integral*speedAndBiases.segment<3>(6)*/)-g_W*Delta_t;
+
+  // std::cout << "T_WS Rotation Matrix after propagation: " << std::endl << T_WS.C() << std::endl << T_WS.r() << std::endl << std::endl;
+  std::cout << "Acceleration integral: " << acc_integral.transpose() << std::endl;
+
+
 
   // assign Jacobian, if requested
   if (jacobian) {
