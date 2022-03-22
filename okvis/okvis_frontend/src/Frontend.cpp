@@ -70,16 +70,16 @@ Frontend::Frontend(size_t numCameras)
     : isInitialized_(false),
       numCameras_(numCameras),
       briskDetectionOctaves_(0),
-      briskDetectionThreshold_(50.0),
-      briskDetectionAbsoluteThreshold_(800.0),
+      briskDetectionThreshold_(30.0),
+      briskDetectionAbsoluteThreshold_(400.0),
       briskDetectionMaximumKeypoints_(450),
       briskDescriptionRotationInvariance_(true),
       briskDescriptionScaleInvariance_(false),
-      briskMatchingThreshold_(60.0),
+      briskMatchingThreshold_(200.0),
       matcher_(
           std::unique_ptr<okvis::DenseMatcher>(new okvis::DenseMatcher(4))),
-      keyframeInsertionOverlapThreshold_(0.6),
-      keyframeInsertionMatchingRatioThreshold_(0.2) {
+      keyframeInsertionOverlapThreshold_(0.1),
+      keyframeInsertionMatchingRatioThreshold_(0.1) {
   // create mutexes for feature detectors and descriptor extractors
   for (size_t i = 0; i < numCameras_; ++i) {
     featureDetectorMutexes_.push_back(
@@ -190,6 +190,8 @@ bool Frontend::dataAssociationAndInitialization(
 
     if (num3dMatches <= requiredMatches) {
       LOG(WARNING) << "Tracking failure. Number of 3d2d-matches: " << num3dMatches;
+    } else {
+      LOG(WARNING) << "Tracking success! Number of 3d2d-matches: " << num3dMatches;
     }
 
     // keyframe decision, at the moment only landmarks that match with keyframe are initialised
@@ -383,6 +385,7 @@ int Frontend::matchToKeyframes(okvis::Estimator& estimator,
   rotationOnly = true;
   if (estimator.numFrames() < 2) {
     // just starting, so yes, we need this as a new keyframe
+    std::cout << "Returning from matchToKeyframes because estimator has less than 2 frames." << std::endl;
     return 0;
   }
 
@@ -569,7 +572,8 @@ void Frontend::matchStereo(okvis::Estimator& estimator,
       if (multiFrame->landmarkId(im, k) != 0) {
         continue;  // already identified correspondence
       }
-      multiFrame->setLandmarkId(im, k, okvis::IdProvider::instance().newId());
+      uint64_t id = okvis::IdProvider::instance().newId();
+      multiFrame->setLandmarkId(im, k, id);
     }
   }
 }
@@ -607,7 +611,7 @@ int Frontend::runRansac3d2d(okvis::Estimator& estimator,
           adapter,
           opengv::sac_problems::absolute_pose::FrameAbsolutePoseSacProblem::Algorithm::GP3P));
   ransac.sac_model_ = absposeproblem_ptr;
-  ransac.threshold_ = 9;
+  ransac.threshold_ = 20;
   ransac.max_iterations_ = 50;
   // initial guess not needed...
   // run the ransac
@@ -802,9 +806,10 @@ int Frontend::runRansac2d2d(okvis::Estimator& estimator,
     }
   }
 
-  if (rel_pose_success || rotation_only_success)
+  if (rel_pose_success || rotation_only_success) {
     return totalInlierNumber;
-  else {
+  } else {
+    std::cout << "RANSAC FAILURE!" << std::endl;
     rotationOnly = true;  // hack...
     return -1;
   }
