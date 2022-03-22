@@ -18,21 +18,21 @@ camera_params:
     sigma_absolute_orientation: 0.0 # The standard deviation of the camera extrinsics orientation, e.g. 1.0e-3 for online-calib [rad].
     sigma_c_relative_translation: 0.0 # The std. dev. of the cam. extr. transl. change between frames, e.g. 1.0e-6 for adaptive online calib (not less for numerics) [m].
     sigma_c_relative_orientation: 0.0 # The std. dev. of the cam. extr. orient. change between frames, e.g. 1.0e-6 for adaptive online calib (not less for numerics) [rad].
-    timestamp_tolerance: 0.005 # [s] stereo frame out-of-sync tolerance
+    timestamp_tolerance: 0.05 # [s] stereo frame out-of-sync tolerance
 
 imu_params:
     a_max: 176.0 # acceleration saturation [m/s^2]
     g_max: 8.37758040957 # gyro saturation [rad/s]
     sigma_g_c: 1.15191731e-4 # gyro noise density [rad/s/sqrt(Hz)]
     sigma_a_c: 2.0000e-3 # accelerometer noise density [m/s^2/sqrt(Hz)]
-    sigma_bg: 0.00349 # gyro bias prior [rad/s]
+    sigma_bg: 0.00349066 # gyro bias prior [rad/s]
     sigma_ba: 0.1 # accelerometer bias prior [m/s^2]
     sigma_gw_c: 4.0e-6 # gyro drift noise density [rad/s^s/sqrt(Hz)]
     sigma_aw_c: 4.0e-5 # accelerometer drift noise density [m/s^2/sqrt(Hz)]
     tau: 3600.0 # reversion time constant, currently not in use [s]
     g: 9.81007 # Earth's acceleration due to gravity [m/s^2]
     a0: [ 0.0, 0.0, 0.0 ] # Accelerometer bias [m/s^2]
-    imu_rate: 10
+    imu_rate: 30
     # tranform Body-Sensor (IMU)
     T_BS:
         [0.0000, -1.0000, 0.0000, -0.38,
@@ -46,9 +46,9 @@ numImuFrames: 3 # number of frames linked by most recent nonlinear IMU error ter
 
 # ceres optimization options
 ceres_options:
-    minIterations: 3   # minimum number of iterations always performed
-    maxIterations: 10  # never do more than these, even if not converged
-    timeLimit: 0.135   # [s] negative values will set the an unlimited time limit
+    minIterations: 100   # minimum number of iterations always performed
+    maxIterations: 200  # never do more than these, even if not converged
+    timeLimit: -1   # [s] negative values will set the an unlimited time limit
 
 # detection
 detection_options:
