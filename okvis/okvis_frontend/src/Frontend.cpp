@@ -70,16 +70,16 @@ Frontend::Frontend(size_t numCameras)
     : isInitialized_(false),
       numCameras_(numCameras),
       briskDetectionOctaves_(0),
-      briskDetectionThreshold_(30.0),
-      briskDetectionAbsoluteThreshold_(400.0),
+      briskDetectionThreshold_(100.0),
+      briskDetectionAbsoluteThreshold_(100.0),
       briskDetectionMaximumKeypoints_(450),
       briskDescriptionRotationInvariance_(true),
       briskDescriptionScaleInvariance_(false),
-      briskMatchingThreshold_(200.0),
+      briskMatchingThreshold_(100.0),
       matcher_(
-          std::unique_ptr<okvis::DenseMatcher>(new okvis::DenseMatcher(4))),
-      keyframeInsertionOverlapThreshold_(0.1),
-      keyframeInsertionMatchingRatioThreshold_(0.1) {
+          std::unique_ptr<okvis::DenseMatcher>(new okvis::DenseMatcher(1))),
+      keyframeInsertionOverlapThreshold_(0.5),
+      keyframeInsertionMatchingRatioThreshold_(0.2) {
   // create mutexes for feature detectors and descriptor extractors
   for (size_t i = 0; i < numCameras_; ++i) {
     featureDetectorMutexes_.push_back(
@@ -191,7 +191,7 @@ bool Frontend::dataAssociationAndInitialization(
     if (num3dMatches <= requiredMatches) {
       LOG(WARNING) << "Tracking failure. Number of 3d2d-matches: " << num3dMatches;
     } else {
-      LOG(WARNING) << "Tracking success! Number of 3d2d-matches: " << num3dMatches;
+      //LOG(WARNING) << "Tracking success! Number of 3d2d-matches: " << num3dMatches;
     }
 
     // keyframe decision, at the moment only landmarks that match with keyframe are initialised

@@ -392,7 +392,7 @@ int ImuError::propagation(const okvis::ImuMeasurementDeque & imuMeasurements,
       LOG(WARNING) << "acc saturation";
     }
 
-    std::cout << "Acceleration reading: (" << acc_S_0[0] << ", " << acc_S_0[1] << ", " << acc_S_0[2] << ")" << std::endl;
+    //std::cout << "Acceleration reading: (" << acc_S_0[0] << ", " << acc_S_0[1] << ", " << acc_S_0[2] << ")" << std::endl;
 
     // actual propagation
     // orientation:
@@ -487,7 +487,7 @@ int ImuError::propagation(const okvis::ImuMeasurementDeque & imuMeasurements,
   speedAndBiases.head<3>() += C_WS_0*(acc_integral/*-C_integral*speedAndBiases.segment<3>(6)*/)-g_W*Delta_t;
 
   // std::cout << "T_WS Rotation Matrix after propagation: " << std::endl << T_WS.C() << std::endl << T_WS.r() << std::endl << std::endl;
-  std::cout << "Acceleration integral: " << acc_integral.transpose() << std::endl;
+  //std::cout << "Acceleration integral: " << acc_integral.transpose() << std::endl;
 
 
 

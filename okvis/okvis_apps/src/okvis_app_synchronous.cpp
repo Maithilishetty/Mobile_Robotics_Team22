@@ -72,6 +72,22 @@ class PoseViewer
     _image.create(imageSize, imageSize, CV_8UC3);
     drawing_ = false;
     showing_ = false;
+
+    // New file IO stuff for getting output as a csv file
+    out_file.open("pose_out.csv");
+    out_file << "timestamp, T_WS_x, T_WS_y, T_WS_z, T_WS_qx, T_WS_qy, T_WS_qz, T_WS_qw\n";
+  }
+  void outputToTextAsCallback(
+    const okvis::Time & t, const okvis::kinematics::Transformation & T_WS,
+    const Eigen::Matrix<double, 9, 1> & speedAndBiases,
+    const Eigen::Matrix<double, 3, 1> & omega_S) 
+  {
+    Eigen::Vector3d pos = T_WS.r();
+    Eigen::Quaterniond qd = T_WS.q();
+
+    out_file << t.toNSec() << "," << pos.x() << "," << pos.y() << "," << pos.z() << "," << qd.x() << "," << qd.y() << "," << qd.z() << "," << qd.w() << "\n";
+    
+    publishFullStateAsCallback(t, T_WS, speedAndBiases, omega_S);
   }
   // this we can register as a callback
   void publishFullStateAsCallback(
@@ -180,6 +196,8 @@ class PoseViewer
       i++;
     }
   }
+  // New file IO
+  std::ofstream out_file;
   cv::Mat _image;
   std::vector<cv::Point2d> _path;
   std::vector<double> _heights;
@@ -224,7 +242,7 @@ int main(int argc, char **argv)
 
   PoseViewer poseViewer;
   okvis_estimator.setFullStateCallback(
-      std::bind(&PoseViewer::publishFullStateAsCallback, &poseViewer,
+      std::bind(&PoseViewer::outputToTextAsCallback, &poseViewer,
                 std::placeholders::_1, std::placeholders::_2,
                 std::placeholders::_3, std::placeholders::_4));
 
@@ -326,7 +344,7 @@ int main(int argc, char **argv)
         seconds = s.substr(0, s.size() - 13);
       }
       t = okvis::Time(std::stoi(seconds), std::stoi(nanoseconds));
-      std::cout << "new camera timestamp: " << t << std::endl;
+      //std::cout << "new camera timestamp: " << t << std::endl;
 
       if (start == okvis::Time(0.0)) {
         start = t;
@@ -373,7 +391,7 @@ int main(int argc, char **argv)
         }
 
         t_imu = okvis::Time(std::stoi(seconds), std::stoi(nanoseconds));
-        std::cout << "READ NEW IMU TIME: " << t_imu << std::endl;
+        //std::cout << "READ NEW IMU TIME: " << t_imu << std::endl;
 
         // add the IMU measurement for (blocking) processing
         if (t_imu - start + okvis::Duration(1.0) > deltaT) {

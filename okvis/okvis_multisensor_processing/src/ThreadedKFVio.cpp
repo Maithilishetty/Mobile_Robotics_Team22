@@ -388,7 +388,7 @@ void ThreadedKFVio::frameConsumerLoop(size_t cameraIndex) {
     }
 
     if (imuData.front().timeStamp > frame->timeStamp) {
-      LOG(WARNING) << "Frame (" << imuData.front().timeStamp << ") is newer than oldest IMU measurement (" << frame->timeStamp << "). Dropping it.";
+      LOG(WARNING) << "Frame (" << frame->timeStamp << ") is newer than oldest IMU measurement (" << imuData.front().timeStamp << ") At begin time " << imuDataBeginTime << ". Dropping it.";
       beforeDetectTimer.stop();
       continue;
     }
