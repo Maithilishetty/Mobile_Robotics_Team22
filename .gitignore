@@ -2,7 +2,7 @@
 *.bag
 *.zip
 *.png
-*.csv
+data.csv
 
 # Ignore example data
 mav0

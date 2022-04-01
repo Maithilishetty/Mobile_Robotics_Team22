@@ -60,6 +60,7 @@
 #include <okvis/ThreadedKFVio.hpp>
 
 #include <boost/filesystem.hpp>
+#include <okvis/ImageEnhancement.hpp>
 
 class PoseViewer
 {
@@ -85,7 +86,7 @@ class PoseViewer
     Eigen::Vector3d pos = T_WS.r();
     Eigen::Quaterniond qd = T_WS.q();
 
-    out_file << t.toNSec() << "," << pos.x() << "," << pos.y() << "," << pos.z() << "," << qd.x() << "," << qd.y() << "," << qd.z() << "," << qd.w() << "\n";
+    out_file << t.toNSec() << "," << pos.x() << "," << pos.y() << "," << pos.z() << "," << qd.x() << "," << qd.y() << "," << qd.z() << "," << qd.w() << "\n" << std::flush;
     
     publishFullStateAsCallback(t, T_WS, speedAndBiases, omega_S);
   }
@@ -326,9 +327,16 @@ int main(int argc, char **argv)
     okvis::Time t;
 
     for (size_t i = 0; i < numCameras; ++i) {
-      cv::Mat filtered = cv::imread(
+      cv::Mat in = cv::imread(
           path + "/cam" + std::to_string(i) + "/data/" + *cam_iterators.at(i),
           cv::IMREAD_GRAYSCALE);
+
+      // NEW: RUN IMAGE ENHANCEMENT
+      //ImageEnhancement enhancer(in, 16, 0.01, 5);
+      cv::Mat filtered;
+      //enhancer.enhance(in, filtered);
+      filtered = in;
+      
       //std::cout << "Getting new image: " << path << "/cam" << std::to_string(i) << "/data/" << *cam_iterators.at(i) << std::endl;
       // New code to properly format data in scientific notation
       std::string seconds, nanoseconds;
@@ -340,9 +348,10 @@ int main(int argc, char **argv)
         nanoseconds = s.substr(10, s.find("E") - 10);
         while (nanoseconds.length() < 9) nanoseconds = nanoseconds + "9";
       } else {
-        nanoseconds = s.substr(s.size() - 13, 9);
-        seconds = s.substr(0, s.size() - 13);
+        nanoseconds = s.substr(10, 9);
+        seconds = s.substr(0, 10);
       }
+      //std::cout << seconds << " " << nanoseconds << std::endl;
       t = okvis::Time(std::stoi(seconds), std::stoi(nanoseconds));
       //std::cout << "new camera timestamp: " << t << std::endl;
 
@@ -389,7 +398,7 @@ int main(int argc, char **argv)
           std::getline(stream, s, ',');
           acc[j] = std::stof(s);
         }
-
+        
         t_imu = okvis::Time(std::stoi(seconds), std::stoi(nanoseconds));
         //std::cout << "READ NEW IMU TIME: " << t_imu << std::endl;
 
