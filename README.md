@@ -28,6 +28,7 @@ make -j$nproc
 sudo make install
 ```
 - OpenCV 3.2.0:
+
 Install the dependency packages:
 ```
 sudo apt-get install build-essential
