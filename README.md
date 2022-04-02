@@ -13,6 +13,42 @@ There are three separate projects within this repository: ORB-SLAM3 with Image E
 
 TODO insert ORB-SLAM3 build instructions here.
 
+First, install dependencies.
+
+- <a href="https://github.com/stevenlovegrove/Pangolin">Pangolin</a>
+```
+cd ~/<directory>
+git clone --recursive https://github.com/stevenlovegrove/Pangolin.git
+cd Pangolin
+git checkout v0.6
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-std=c++11 ..
+make -j$nproc
+sudo make install
+```
+- OpenCV 3.2.0:
+
+- Eigen3
+
+Here is the link to the original <a href="https://github.com/nindanaoto/ORB_SLAM3">ORB_SLAM3</a> repository we use.
+To build our ORB_SLAM3 project:``
+```
+cd ORB_SLAM3
+chmod +x build.sh
+./build.sh
+```
+To run the project. For example, on harbor dataset:
+TODO check later based on directory
+For Monocular-Inertial
+```
+./Examples/Monocular-Inertial/mono_inertial_harbor ./Vocabulary/ORBvoc.txt ./Examples/Monocular-Inertial/harbor.yaml "$pathDatasetHarbor"/harbor01 ./Examples/Monocular-Inertial/Harbor_TimeStamps/harbor01.txt dataset-harbor01_monoi
+```
+FOr Monocular
+```
+./Examples/Monocular/mono_harbor ./Vocabulary/ORBvoc.txt ./Examples/Monocular/harbor.yaml "$pathDatasetHarbor"/harbor01 ./Examples/Monocular/Harbor_TimeStamps/harbor01.txt dataset-harbor01_mono
+```
+
 ## OKVIS with Image Enhancement
 
 The second project is OKVIS modified to include image enhcncement capabilities. Here is a link to the original OKVIS repository. To build, first install dependencies:
