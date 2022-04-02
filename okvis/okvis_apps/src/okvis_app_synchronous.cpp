@@ -221,15 +221,22 @@ int main(int argc, char **argv)
   FLAGS_stderrthreshold = 0;  // INFO: 0, WARNING: 1, ERROR: 2, FATAL: 3
   FLAGS_colorlogtostderr = 1;
 
-  if (argc != 3 && argc != 4) {
+  if (argc != 3 && argc != 4 && argc != 5) {
     LOG(ERROR)<<
-    "Usage: ./" << argv[0] << " configuration-yaml-file dataset-folder [skip-first-seconds]";
+    "Usage: ./" << argv[0] << " configuration-yaml-file dataset-folder [image_enhancement_method] [skip-first-seconds]";
     return -1;
   }
 
+  // Image enhancement method, default is none
+  std::string image_method = "none";
+  if (argc >= 4) {
+    image_method = std::string(argv[3]);
+  }
+  LOG(INFO) << "Using image enhancement method: " << image_method;
+
   okvis::Duration deltaT(0.0);
-  if (argc == 4) {
-    deltaT = okvis::Duration(atof(argv[3]));
+  if (argc == 5) {
+    deltaT = okvis::Duration(atof(argv[4]));
   }
 
   // read configuration file
@@ -331,13 +338,11 @@ int main(int argc, char **argv)
           path + "/cam" + std::to_string(i) + "/data/" + *cam_iterators.at(i),
           cv::IMREAD_GRAYSCALE);
 
-      // NEW: RUN IMAGE ENHANCEMENT
-      ImageEnhancement enhancer(in, 16, 0.01, 5);
+      // Run image enhancement
+      ImageEnhancement enhancer(image_method);
       cv::Mat filtered;
-      //enhancer.enhance(in, filtered);
-      filtered = in;
+      enhancer.enhance(in, filtered);
       
-      //std::cout << "Getting new image: " << path << "/cam" << std::to_string(i) << "/data/" << *cam_iterators.at(i) << std::endl;
       // New code to properly format data in scientific notation
       std::string seconds, nanoseconds;
       std::string s = *(cam_iterators.at(i));
@@ -351,9 +356,7 @@ int main(int argc, char **argv)
         nanoseconds = s.substr(10, 9);
         seconds = s.substr(0, 10);
       }
-      //std::cout << seconds << " " << nanoseconds << std::endl;
       t = okvis::Time(std::stoi(seconds), std::stoi(nanoseconds));
-      //std::cout << "new camera timestamp: " << t << std::endl;
 
       if (start == okvis::Time(0.0)) {
         start = t;
@@ -400,7 +403,6 @@ int main(int argc, char **argv)
         }
         
         t_imu = okvis::Time(std::stoi(seconds), std::stoi(nanoseconds));
-        //std::cout << "READ NEW IMU TIME: " << t_imu << std::endl;
 
         // add the IMU measurement for (blocking) processing
         if (t_imu - start + okvis::Duration(1.0) > deltaT) {

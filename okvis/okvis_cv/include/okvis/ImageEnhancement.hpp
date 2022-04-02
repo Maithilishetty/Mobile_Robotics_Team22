@@ -7,6 +7,7 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 #include <stdio.h>
+#include <string>
 
 using cv::CLAHE;
 
@@ -14,10 +15,22 @@ using cv::CLAHE;
 class ImageEnhancement {
 
 public:
-    ImageEnhancement(cv::Mat guide, int radius, double eps, double alpha) {
-    };
+    ImageEnhancement(std::string method) {
+        m = method;
+    }
 
     void enhance(cv::Mat src, cv::Mat &res) {
+        if (m == "simple") {
+            simple_enhancement(src, res);
+        } else {
+            res = src;
+        }
+    }
+
+private:
+
+    // Image enhancement methods
+    void simple_enhancement(cv::Mat src, cv::Mat &res) {
         cv::Mat gui_small, gui_large;
         cv::Ptr<cv::ximgproc::GuidedFilter> f_small = cv::ximgproc::createGuidedFilter(src, 2, 0.1*0.1);
         cv::Ptr<cv::ximgproc::GuidedFilter> f_large = cv::ximgproc::createGuidedFilter(src, 2*10, 0.1*0.1);
@@ -32,8 +45,7 @@ public:
         clahe->apply(detail, res);
     }
 
-private:
-    cv::Ptr<cv::ximgproc::GuidedFilter> f_small, f_large;
+    std::string m;
     double a;
 };
 
