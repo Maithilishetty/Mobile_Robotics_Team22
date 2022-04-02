@@ -28,23 +28,66 @@ make -j$nproc
 sudo make install
 ```
 - OpenCV 3.2.0:
+Install the dependency packages:
+```
+sudo apt-get install build-essential
+sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+```
+Clone opencv and opencv_contrib:
+```
+cd ~/<directory>
+git clone https://github.com/opencv/opencv.git
+git clone https://github.com/opencv/opencv_contrib.git
+cd opencv
+git checkout 3.2.0
+cd ..
+cd opencv_contrib
+git checkout 3.2.0
+cd ..
+```
+Compile and install opencv as well as opencv_contrib:
+```
+cd opencv
+mkdir build
+cd build
+cmake -D CMAKE_BUILD_TYPE=RELEASE \
+      -D CMAKE_INSTALL_PREFIX=/usr/local \
+      -D INSTALL_C_EXAMPLES=ON \
+      -D INSTALL_PYTHON_EXAMPLES=ON \
+      -D WITH_TBB=ON \
+      -D WITH_V4L=ON \
+      -D WITH_QT=ON \
+      -D WITH_OPENGL=ON \
+      -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
+      -D BUILD_EXAMPLES=ON ..
+make -j$nproc
+sudo make install
+sudo sh -c 'echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf'
+sudo ldconfig
+```
 
 - Eigen3
+```
+sudo apt install libeigen3-dev
+```
 
 Here is the link to the original <a href="https://github.com/nindanaoto/ORB_SLAM3">ORB_SLAM3</a> repository we use.
-To build our ORB_SLAM3 project:``
+To build our ORB_SLAM3 project:
 ```
 cd ORB_SLAM3
 chmod +x build.sh
 ./build.sh
 ```
 To run the project. For example, on harbor dataset:
+
 TODO check later based on directory
-For Monocular-Inertial
+
+For Monocular-Inertial sensor,
 ```
 ./Examples/Monocular-Inertial/mono_inertial_harbor ./Vocabulary/ORBvoc.txt ./Examples/Monocular-Inertial/harbor.yaml "$pathDatasetHarbor"/harbor01 ./Examples/Monocular-Inertial/Harbor_TimeStamps/harbor01.txt dataset-harbor01_monoi
 ```
-FOr Monocular
+FOr Monocular sensor,
 ```
 ./Examples/Monocular/mono_harbor ./Vocabulary/ORBvoc.txt ./Examples/Monocular/harbor.yaml "$pathDatasetHarbor"/harbor01 ./Examples/Monocular/Harbor_TimeStamps/harbor01.txt dataset-harbor01_mono
 ```
