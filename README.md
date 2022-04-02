@@ -88,7 +88,7 @@ For Monocular-Inertial sensor,
 ```
 ./Examples/Monocular-Inertial/mono_inertial_harbor ./Vocabulary/ORBvoc.txt ./Examples/Monocular-Inertial/harbor.yaml "$pathDatasetHarbor"/harbor01 ./Examples/Monocular-Inertial/Harbor_TimeStamps/harbor01.txt dataset-harbor01_monoi
 ```
-FOr Monocular sensor,
+For Monocular sensor,
 ```
 ./Examples/Monocular/mono_harbor ./Vocabulary/ORBvoc.txt ./Examples/Monocular/harbor.yaml "$pathDatasetHarbor"/harbor01 ./Examples/Monocular/Harbor_TimeStamps/harbor01.txt dataset-harbor01_mono
 ```
