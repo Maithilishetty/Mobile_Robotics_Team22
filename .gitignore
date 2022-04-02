@@ -3,8 +3,12 @@
 *.zip
 *.png
 data.csv
+.vscode
+.git
+image_enhancement/build
+image_enhancement/.vscode
 
-# Ignore example data
+# Ignore datasets
 mav0
 cave_dataset
 

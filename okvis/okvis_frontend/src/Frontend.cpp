@@ -360,6 +360,9 @@ bool Frontend::doWeNeedANewKeyframe(
     double matchingRatio = double(frameBMatches.size())
         / double(pointsInFrameBMatchesArea);
 
+    // Output matches
+    std::cout << "Matches found: " << frameBMatches.size() << std::endl;
+
     // calculate overlap score
     overlap = std::max(overlapArea, overlap);
     ratio = std::max(matchingRatio, ratio);

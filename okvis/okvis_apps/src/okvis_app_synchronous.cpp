@@ -75,8 +75,8 @@ class PoseViewer
     showing_ = false;
 
     // New file IO stuff for getting output as a csv file
-    out_file.open("pose_out.csv");
-    out_file << "timestamp, T_WS_x, T_WS_y, T_WS_z, T_WS_qx, T_WS_qy, T_WS_qz, T_WS_qw\n";
+    out_file.open("pose_out.txt");
+    //out_file << "timestamp, T_WS_x, T_WS_y, T_WS_z, T_WS_qx, T_WS_qy, T_WS_qz, T_WS_qw\n";
   }
   void outputToTextAsCallback(
     const okvis::Time & t, const okvis::kinematics::Transformation & T_WS,
@@ -86,7 +86,7 @@ class PoseViewer
     Eigen::Vector3d pos = T_WS.r();
     Eigen::Quaterniond qd = T_WS.q();
 
-    out_file << t.toNSec() << "," << pos.x() << "," << pos.y() << "," << pos.z() << "," << qd.x() << "," << qd.y() << "," << qd.z() << "," << qd.w() << "\n" << std::flush;
+    out_file << t.toNSec() << " " << pos.x() << " " << pos.y() << " " << pos.z() << " " << qd.x() << " " << qd.y() << " " << qd.z() << " " << qd.w() << "\n" << std::flush;
     
     publishFullStateAsCallback(t, T_WS, speedAndBiases, omega_S);
   }
@@ -332,7 +332,7 @@ int main(int argc, char **argv)
           cv::IMREAD_GRAYSCALE);
 
       // NEW: RUN IMAGE ENHANCEMENT
-      //ImageEnhancement enhancer(in, 16, 0.01, 5);
+      ImageEnhancement enhancer(in, 16, 0.01, 5);
       cv::Mat filtered;
       //enhancer.enhance(in, filtered);
       filtered = in;
