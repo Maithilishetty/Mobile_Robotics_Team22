@@ -137,3 +137,7 @@ Then, from the root directory of this repository:
 - Build the project: ```make -j```
 
 The project can be run from the build directory as ```./image_enhancement <path_to_input_image> <path_to_output_image>```
+
+## Evaluation
+
+TODO add explanations for evaluation
