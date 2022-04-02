@@ -27,7 +27,7 @@ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-std=c++11 ..
 make -j$nproc
 sudo make install
 ```
-- OpenCV 3.2.0:
+- <a href="https://docs.opencv.org/3.2.0/d9/df8/tutorial_root.html">OpenCV 3.2.0</a>:
 
 Install the dependency packages:
 ```
@@ -47,7 +47,7 @@ cd opencv_contrib
 git checkout 3.2.0
 cd ..
 ```
-Compile and install opencv as well as opencv_contrib:
+Compile and install <a href="https://github.com/opencv/opencv">opencv</a> as well as <a href="https://github.com/opencv/opencv_contrib">opencv_contrib</a>:
 ```
 cd opencv
 mkdir build
@@ -68,7 +68,7 @@ sudo sh -c 'echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf'
 sudo ldconfig
 ```
 
-- Eigen3
+- <a href="https://eigen.tuxfamily.org/index.php?title=Main_Page">Eigen3</a>
 ```
 sudo apt install libeigen3-dev
 ```
