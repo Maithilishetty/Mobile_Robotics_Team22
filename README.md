@@ -27,7 +27,7 @@ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-std=c++11 ..
 make -j$nproc
 sudo make install
 ```
-- <a href="https://docs.opencv.org/3.2.0/d9/df8/tutorial_root.html">OpenCV 3.2.0</a>:
+- <a href="https://docs.opencv.org/4.2.0/d9/df8/tutorial_root.html">OpenCV 4.2.0</a>:
 
 Install the dependency packages:
 ```
@@ -41,10 +41,8 @@ cd ~/<directory>
 git clone https://github.com/opencv/opencv.git
 git clone https://github.com/opencv/opencv_contrib.git
 cd opencv
-git checkout 3.2.0
 cd ..
 cd opencv_contrib
-git checkout 3.2.0
 cd ..
 ```
 Compile and install <a href="https://github.com/opencv/opencv">opencv</a> as well as <a href="https://github.com/opencv/opencv_contrib">opencv_contrib</a>:
@@ -74,23 +72,23 @@ sudo apt install libeigen3-dev
 ```
 
 Here is the link to the original <a href="https://github.com/nindanaoto/ORB_SLAM3">ORB_SLAM3</a> repository we use.
-To build our ORB_SLAM3 project:
+To build our ORB_SLAM3_modified project:
 ```
-cd ORB_SLAM3
+cd ORB_SLAM3_modified
 chmod +x build.sh
 ./build.sh
 ```
 To run the project. For example, on harbor dataset:
 
-TODO check later based on directory
+TODO explain about the image_method parameter 
 
 For Monocular-Inertial sensor,
 ```
-./Examples/Monocular-Inertial/mono_inertial_harbor ./Vocabulary/ORBvoc.txt ./Examples/Monocular-Inertial/harbor.yaml "$pathDatasetHarbor"/harbor01 ./Examples/Monocular-Inertial/Harbor_TimeStamps/harbor01.txt dataset-harbor01_monoi
+./Examples/Monocular-Inertial/mono_inertial_harbor ./Vocabulary/ORBvoc.txt ./Examples/Monocular-Inertial/harbor.yaml "$pathDatasetHarbor"/harbor01  ./Examples/Monocular-Inertial/Harbor_TimeStamps/harbor01.txt output_filename [image_mathod]
 ```
 For Monocular sensor,
 ```
-./Examples/Monocular/mono_harbor ./Vocabulary/ORBvoc.txt ./Examples/Monocular/harbor.yaml "$pathDatasetHarbor"/harbor01 ./Examples/Monocular/Harbor_TimeStamps/harbor01.txt dataset-harbor01_mono
+./Examples/Monocular/mono_harbor ./Vocabulary/ORBvoc.txt ./Examples/Monocular/harbor.yaml "$pathDatasetHarbor"/harbor01 ./Examples/Monocular/Harbor_TimeStamps/harbor01.txt output_filename [image_mathod]
 ```
 
 ## OKVIS with Image Enhancement
