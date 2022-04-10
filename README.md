@@ -11,9 +11,15 @@ There are three separate projects within this repository: ORB-SLAM3 with Image E
 
 ## ORB-SLAM3 with Image Enhancement
 
-TODO insert ORB-SLAM3 build instructions here.
+The first project is ORB_SLAM3 modified to include image enhancement capabilities. To build, first install dependencies by following the instructions from [ORB_SLAM3](https://github.com/UZ-SLAMLab/ORB_SLAM3). 
 
-First, install dependencies.
+- Pangolin 
+- OpenCV 4.2.0 
+- OpenCV Contrib 
+- Eigen3 
+ 
+
+<!---First, install dependencies.
 
 - <a href="https://github.com/stevenlovegrove/Pangolin">Pangolin</a>
 ```
@@ -70,9 +76,9 @@ sudo ldconfig
 ```
 sudo apt install libeigen3-dev
 ```
+--->
 
-Here is the link to the original <a href="https://github.com/nindanaoto/ORB_SLAM3">ORB_SLAM3</a> repository we use.
-To build our ORB_SLAM3_modified project:
+Then, to build our ORB_SLAM3_modified project:
 ```
 cd ORB_SLAM3_modified
 chmod +x build.sh
@@ -80,12 +86,10 @@ chmod +x build.sh
 ```
 To run the project. For example, on harbor dataset:
 
-TODO explain about the image_method parameter 
-
-For Monocular-Inertial sensor,
 ```
 ./Examples/Monocular-Inertial/mono_inertial_harbor ./Vocabulary/ORBvoc.txt <path_to_config_file> <path_to_dataset_folder>  <path_to_timestamps> <output_filename> [image_method]
 ```
+Here, the [image_method] is an optional image enhancement parameter which is set to 'none' by default. To enable image enhancement =, set this parameter to 'simple'. The same convention is also followed in the case of OKVIS. 
 
 ## OKVIS with Image Enhancement
 
