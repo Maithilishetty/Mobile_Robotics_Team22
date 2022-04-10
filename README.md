@@ -93,7 +93,7 @@ For Monocular sensor,
 
 ## OKVIS with Image Enhancement
 
-The second project is OKVIS modified to include image enhcncement capabilities. Here is a link to the original OKVIS repository. To build, first install dependencies:
+The second project is [OKVIS](https://github.com/ethz-asl/okvis) modified to include image enhancement capabilities. To build, first install dependencies:
 
 - CMake: ```sudo apt-get install cmake```
 - Google-Glog and GFlags: ```sudo apt-get install libgoogle-glog-dev```
@@ -114,9 +114,7 @@ The project can now be run from the build directory as:
 
 ```./okvis_app_synchronous <path_to_okvis_config_yaml> <path_to_dataset> <image_enhancement_technique>```
 
-To run the example dataset, you need to convert it to the correct okvis format:
-
-TODO ADD INSTRUCTIONS TO CONVERT HARBOR DATASET TO OKVIS INPUT FORMAT
+To run the example (AQUALOC Harbor) dataset, it needs to be in the correct format, which can be downloaded [here](https://drive.google.com/file/d/15avpUuBbduXZoZ_Zv__WsQhbammBiMAz). You can also download it from source and manually convert it. Then, run:
 
 ```./okvis_app_synchronous ../config/config_harbor.yaml <path_to_transformed_harbor_dataset>```
 
