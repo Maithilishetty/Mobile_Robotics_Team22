@@ -86,7 +86,6 @@ For Monocular-Inertial sensor,
 ```
 ./Examples/Monocular-Inertial/mono_inertial_harbor ./Vocabulary/ORBvoc.txt <path_to_config_file> <path_to_dataset_folder>  <path_to_timestamps> <output_filename> [image_method]
 ```
-```
 
 ## OKVIS with Image Enhancement
 
