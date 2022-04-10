@@ -11,7 +11,7 @@ There are three separate projects within this repository: ORB-SLAM3 with Image E
 
 ## ORB-SLAM3 with Image Enhancement
 
-The first project is ORB_SLAM3 modified to include image enhancement capabilities. To build, first install dependencies by following the instructions from [ORB_SLAM3](https://github.com/UZ-SLAMLab/ORB_SLAM3). 
+The first project is ORB_SLAM3 modified to include image enhancement capabilities. To build, first install dependencies by following instructions from [ORB_SLAM3](https://github.com/UZ-SLAMLab/ORB_SLAM3). 
 
 - Pangolin 
 - OpenCV 4.2.0 
