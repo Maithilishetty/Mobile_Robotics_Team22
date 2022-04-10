@@ -1,13 +1,13 @@
-# Improving Tracking Abilities of Underwater ORB-SLAM3 and OKVIS Applications Via Image Enhancement
+# Real-time Image Enhancement for Visual-Inertial SLAM in Underwater Scenarios
 ### EECS 568 Team 22
 
-This repository contains the code for our final project for EECS 568: Mobile Robotics: Methods and Algorithms. Our project compared two different SLAM algorithms, ORB-SLAM3 and OKVIS. Then, we examined the effects of image enhancement on both algorithms.
+This repository contains the code for our final project for EECS 568: Mobile Robotics: Methods and Algorithms. Our project compared two different SLAM algorithms, ORB-SLAM3 and OKVIS. Then, we examined the effects of real-time image enhancement on both algorithms.
 
 Here (TODO) is a link to our paper.
   
 Here (TODO) is a link to our final presentation and video.
 
-There are three separate projects within this repository: ORB-SLAM3 with Image Enhancement, OKVIS with Image Enhancement, and Single Image Enhancement. We used the <a href="https://www.lirmm.fr/aqualoc/">Aqualoc dataset</a> to test all of our projects. Specifically, we used the harbor sequence 1 data.
+There are three separate projects within this repository: ORB-SLAM3 with Image Enhancement, OKVIS with Image Enhancement, and Single Image Enhancement. We used the <a href="https://www.lirmm.fr/aqualoc/">Aqualoc dataset</a> to test all of our projects. In particular, we made use of Harbor_01 sequence. To run the example dataset, it needs to be in the correct format, which can be downloaded [here](https://drive.google.com/file/d/15avpUuBbduXZoZ_Zv__WsQhbammBiMAz). You can also download it from source and manually convert it.
 
 ## ORB-SLAM3 with Image Enhancement
 
@@ -84,11 +84,8 @@ TODO explain about the image_method parameter
 
 For Monocular-Inertial sensor,
 ```
-./Examples/Monocular-Inertial/mono_inertial_harbor ./Vocabulary/ORBvoc.txt ./Examples/Monocular-Inertial/harbor.yaml "$pathDatasetHarbor"/harbor01  ./Examples/Monocular-Inertial/Harbor_TimeStamps/harbor01.txt output_filename [image_mathod]
+./Examples/Monocular-Inertial/mono_inertial_harbor ./Vocabulary/ORBvoc.txt <path_to_config_file> <path_to_dataset_folder>  <path_to_timestamps> <output_filename> [image_method]
 ```
-For Monocular sensor,
-```
-./Examples/Monocular/mono_harbor ./Vocabulary/ORBvoc.txt ./Examples/Monocular/harbor.yaml "$pathDatasetHarbor"/harbor01 ./Examples/Monocular/Harbor_TimeStamps/harbor01.txt output_filename [image_mathod]
 ```
 
 ## OKVIS with Image Enhancement
