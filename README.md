@@ -120,7 +120,7 @@ Then, run the file on the example harbor dataset as:
 
 ## Single Image Enhancement
 
-Last is the image enhancement project, which is an extremely simple project that can be used to test various image enhancement algorithms on single images at a time, to see if features and contrast will be improved. First, install dependencies:
+Last is the image enhancement project, which is a simple project that can be used to test various image enhancement algorithms on single images at a time, to see if features and contrast will be improved. First, install dependencies:
 
 - CMake: ```sudo apt-get install cmake```
 - OpenCV 4.2.0: ```sudo apt-get install libopencv-dev```
