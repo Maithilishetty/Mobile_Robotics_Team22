@@ -89,7 +89,7 @@ To run the project. For example, on harbor dataset:
 ```
 ./Examples/Monocular-Inertial/mono_inertial_harbor ./Vocabulary/ORBvoc.txt <path_to_config_file> <path_to_dataset_folder>  <path_to_timestamps> <output_filename> [image_method]
 ```
-Here, the [image_method] is an optional image enhancement parameter which is set to 'none' by default. To enable image enhancement =, set this parameter to 'simple'. The same convention is also followed in the case of OKVIS. 
+Here, the [image_method] is an optional image enhancement parameter which is set to 'none' by default. To enable image enhancement, set this parameter to 'simple'. The same convention is also followed in the case of OKVIS. 
 
 ## OKVIS with Image Enhancement
 
@@ -114,7 +114,7 @@ The project can now be run from the build directory as:
 
 ```./okvis_app_synchronous <path_to_okvis_config_yaml> <path_to_dataset> <image_enhancement_technique>```
 
-To run the example (AQUALOC Harbor) dataset, it needs to be in the correct format, which can be downloaded [here](https://drive.google.com/file/d/15avpUuBbduXZoZ_Zv__WsQhbammBiMAz). You can also download it from source and manually convert it. Then, run:
+Then, run the file on the example harbor dataset as:
 
 ```./okvis_app_synchronous ../config/config_harbor.yaml <path_to_transformed_harbor_dataset>```
 
