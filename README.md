@@ -5,7 +5,7 @@ This repository contains the code for our final project for EECS 568: Mobile Rob
 
 Here (TODO) is a link to our paper.
   
-Here [https://youtu.be/INbl_esfQ-Q](https://youtu.be/INbl_esfQ-Q) is a link to our final presentation and video.
+Here is our [final presentation and video](https://youtu.be/INbl_esfQ-Q).
 
 There are three separate projects within this repository: ORB-SLAM3 with Image Enhancement, OKVIS with Image Enhancement, and Single Image Enhancement. We used the <a href="https://www.lirmm.fr/aqualoc/">Aqualoc dataset</a> to test all of our projects. In particular, we made use of Harbor_01 sequence. To run the example dataset, it needs to be in the correct format, which can be downloaded [here](https://drive.google.com/file/d/15avpUuBbduXZoZ_Zv__WsQhbammBiMAz). You can also download it from source and manually convert it.
 
