@@ -136,4 +136,4 @@ The project can be run from the build directory as ```./image_enhancement <path_
 
 ## Evaluation
 
-TODO add explanations for evaluation
+To re-implement the evaluation of trajectory estimation of ORB-SLAM3 or OKVIS, run the jupyter notebook at `Mobile_Robotics_Team22/evaluation/Demo_Evaluation_Result.ipynb`. 
