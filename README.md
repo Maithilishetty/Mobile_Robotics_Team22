@@ -3,12 +3,13 @@
 
 This repository contains the code for our final project for EECS 568: Mobile Robotics: Methods and Algorithms. Our project compared two different SLAM algorithms, ORB-SLAM3 and OKVIS. Then, we examined the effects of real-time image enhancement on both algorithms.
 
-Here (TODO) is a link to our paper.
+Here is our paper (TODO).
   
 Here is our [final presentation and video](https://youtu.be/INbl_esfQ-Q).
 
 There are three separate projects within this repository: ORB-SLAM3 with Image Enhancement, OKVIS with Image Enhancement, and Single Image Enhancement. We used the <a href="https://www.lirmm.fr/aqualoc/">Aqualoc dataset</a> to test all of our projects. In particular, we made use of Harbor_01 sequence. To run the example dataset, it needs to be in the correct format, which can be downloaded [here](https://drive.google.com/file/d/15avpUuBbduXZoZ_Zv__WsQhbammBiMAz). You can also download it from source and manually convert it.
 
+ORB_SLAM3_modified, okvis and image_enhancement folders are for the three projects. util folder contains files for checking matched features, extracting timestamps, renaming images from frame number to timestamp, and changing frame number in groundtruth file to timestamp. data folder contains some results we obtained. evaluation folder contains files for evaluation.
 ## ORB-SLAM3 with Image Enhancement
 
 The first project is ORB_SLAM3 modified to include image enhancement capabilities. To build, first install dependencies by following instructions from [ORB_SLAM3](https://github.com/UZ-SLAMLab/ORB_SLAM3). 
